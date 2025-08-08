@@ -1,0 +1,730 @@
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Phone, Mail, MapPin, Settings, Award, Users, Factory, CheckCircle } from 'lucide-react';
+
+function App() {
+  const [activeSection, setActiveSection] = useState('home');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [pauseAutoSlide, setPauseAutoSlide] = useState(false);
+
+  // Auto-advance carousel every 5 seconds
+  useEffect(() => {
+    if (pauseAutoSlide) return;
+    
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % 2);
+    }, 5000);
+    
+    return () => clearInterval(timer);
+  }, [pauseAutoSlide]);
+
+  const scrollToSection = (sectionId: string) => {
+    setActiveSection(sectionId);
+    setIsMobileMenuOpen(false);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+  
+  const goToPrevSlide = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentSlide(prev => (prev - 1 + 2) % 2);
+  };
+  
+  const goToNextSlide = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentSlide(prev => (prev + 1) % 2);
+  };
+
+  const menuItems = [
+    { id: 'home', label: 'Anasayfa' },
+    { id: 'about', label: 'Hakkımızda' },
+    { id: 'services', label: 'Hizmetler' },
+    { id: 'machines', label: 'Makine Parkuru' },
+    { id: 'references', label: 'Referanslar' },
+    { id: 'certificates', label: 'Kalite Belgeleri' },
+    { id: 'contact', label: 'İletişim' }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center space-x-3">
+              <div className="bg-blue-800 p-2 rounded-lg">
+                <Factory className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-800">RFM Makina</h1>
+                <p className="text-sm text-gray-600">Talaşlı İmalat</p>
+              </div>
+            </div>
+            
+            {/* Desktop Menu */}
+            <nav className="hidden md:flex space-x-2">
+              {menuItems.map((item) => (
+                <div key={item.id} className="relative">
+                  <button
+                    onClick={() => scrollToSection(item.id)}
+                    className={`px-6 py-3 text-base font-medium rounded-md transition-all duration-300 ${
+                      activeSection === item.id
+                        ? 'text-blue-700 bg-blue-50 font-semibold pl-8 pr-6 shadow-sm'
+                        : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50 hover:pl-8'
+                    }`}
+                  >
+                    {activeSection === item.id && (
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 rounded-full transition-all duration-300"></span>
+                    )}
+                    <span className="relative z-10">
+                      {item.label}
+                      {activeSection === item.id && (
+                        <span className="absolute -right-1 -top-1 w-2 h-2 bg-blue-600 rounded-full animate-ping"></span>
+                      )}
+                    </span>
+                  </button>
+                </div>
+              ))}
+            </nav>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden p-2"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+
+          {/* Mobile Menu */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden py-4 border-t">
+              <ul>
+                {menuItems.map((item) => (
+                  <li key={item.id} className="relative">
+                    <button
+                      onClick={() => scrollToSection(item.id)}
+                      className={`block w-full text-left px-6 py-3 text-base font-medium rounded-md transition-all duration-300 ${
+                        activeSection === item.id
+                          ? 'text-blue-700 bg-blue-50 font-semibold pl-8'
+                          : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50 hover:pl-8'
+                      }`}
+                    >
+                      {activeSection === item.id && (
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 rounded-full transition-all duration-300"></span>
+                      )}
+                      <span className="relative z-10">
+                        {item.label}
+                        {activeSection === item.id && (
+                          <span className="absolute -right-2 -top-1 w-2 h-2 bg-blue-600 rounded-full animate-ping"></span>
+                        )}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="pt-20">
+        {/* Home Section with Carousel */}
+        <section id="home" className="relative h-screen">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="relative h-full w-full">
+              {/* Carousel Images */}
+              <div className="relative h-full w-full" onMouseEnter={() => setPauseAutoSlide(true)} onMouseLeave={() => setPauseAutoSlide(false)}>
+                {[
+                  {
+                    image: "./assets/hurjet.jpg",
+                    alt: "Hürjet",
+                    title: "Hürjet",
+                    subtitle: "Türk Havacılık ve Uzay Sanayii tarafından geliştirilen jet eğitim ve hafif taarruz uçağı"
+                  },
+                  {
+                    image: "./assets/kaan.jpg",
+                    alt: "KAAN",
+                    title: "KAAN",
+                    subtitle: "Türkiye'nin 5. nesil savaş uçağı projesi"
+                  }
+                ].map((slide, index) => (
+                  <div 
+                    key={index}
+                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${currentSlide === index ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                  >
+                    <img 
+                      src={slide.image} 
+                      alt={slide.alt} 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = `https://placehold.co/1920x1080/1e40af/ffffff?text=${encodeURIComponent(slide.alt)}`;
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                      <div className="text-center px-4">
+                        <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+                          Talaşlı İmalatta<br />
+                          <span className="text-blue-300">Hassas Çözüm Ortağınız</span>
+                        </h2>
+                        <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
+                          Savunma sanayii başta olmak üzere, yüksek hassasiyetli parça üretiminde 2022'den beri hizmetinizdeyiz.
+                        </p>
+                        <button
+                          onClick={() => scrollToSection('contact')}
+                          className="bg-white text-blue-800 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-lg"
+                        >
+                          İletişime Geçin
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Navigation Arrows */}
+                <button 
+                  onClick={goToPrevSlide}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10"
+                  aria-label="Önceki slayt"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button 
+                  onClick={goToNextSlide}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10"
+                  aria-label="Sonraki slayt"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+                
+                {/* Carousel Navigation Dots */}
+                <div className="absolute bottom-10 left-0 right-0 flex justify-center space-x-3 z-10">
+                  {[0, 1].map((index) => (
+                    <button 
+                      key={index}
+                      onClick={() => goToSlide(index)}
+                      className={`w-3 h-3 rounded-full transition-all ${currentSlide === index ? 'bg-white w-8' : 'bg-white bg-opacity-30 hover:bg-opacity-70'}`}
+                      aria-label={`${index + 1}. slayta git`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* About Section */}
+        <section id="about" className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Hakkımızda</h2>
+              <div className="w-20 h-1 bg-blue-800 mx-auto"></div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-12 mb-16">
+              <div>
+                <p className="text-gray-700 leading-relaxed mb-6">
+                  2022 yılından bu yana talaşlı imalat sektöründe faaliyet gösteren RFM Makina, farklı sektörlerdeki müşterilerine yüksek hassasiyetli parça üretimi sunan bir mühendislik firması olarak hizmet vermektedir.
+                </p>
+                <p className="text-gray-700 leading-relaxed mb-6">
+                  Savunma sanayii başta olmak üzere; endüstriyel hidrolik sistemler, tarımsal sulama sistemleri, kalıp üretimi ve otomotiv sektörü gibi çeşitli alanlarda teknik resme uygun, kaliteli ve zamanında üretim gerçekleştirmektedir.
+                </p>
+                <p className="text-gray-700 leading-relaxed">
+                  CNC freze ve CNC torna tezgâhlarımız ile hem prototip hem de küçük/orta ölçekli seri üretim süreçlerinde çözüm ortağı olarak hizmet vermekteyiz.
+                </p>
+              </div>
+              <div className="bg-gray-50 p-8 rounded-lg">
+                <div className="flex items-center mb-4">
+                  <Factory className="h-6 w-6 text-blue-800 mr-2" />
+                  <h3 className="text-xl font-semibold text-gray-800">Değerlerimiz</h3>
+                </div>
+                <p className="text-gray-700 leading-relaxed">
+                  Kalite, güven ve sürdürülebilirlik değerlerini esas alarak, her geçen gün daha gelişmiş teknolojilerle üretim kabiliyetimizi artırmaktayız.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="bg-blue-50 p-8 rounded-lg text-center">
+                <div className="bg-blue-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Settings className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Misyonumuz</h3>
+                <div className="text-left space-y-2">
+                  <p className="text-gray-700 text-sm">• Müşterilerimize yüksek hassasiyetli talaşlı imalat çözümleri sunmak</p>
+                  <p className="text-gray-700 text-sm">• Kaliteli, teknik şartnamelere uygun ve zamanında üretim sağlamak</p>
+                  <p className="text-gray-700 text-sm">• Teknolojik altyapımızı sürekli geliştirerek sürdürülebilir değer yaratmak</p>
+                </div>
+              </div>
+
+              <div className="bg-green-50 p-8 rounded-lg text-center">
+                <div className="bg-green-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Award className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Vizyonumuz</h3>
+                <div className="text-left space-y-2">
+                  <p className="text-gray-700 text-sm">• Türkiye'nin talaşlı üretim alanında güvenilir çözüm sağlayıcısı olmak</p>
+                  <p className="text-gray-700 text-sm">• Yüksek kalite anlayışı ve çok sektörlü üretim kabiliyeti</p>
+                  <p className="text-gray-700 text-sm">• Yurt içi ve yurt dışında tercih edilen marka olmak</p>
+                </div>
+              </div>
+
+              <div className="bg-orange-50 p-8 rounded-lg text-center">
+                <div className="bg-orange-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Kalite Politikamız</h3>
+                <div className="text-left space-y-2">
+                  <p className="text-gray-700 text-sm">• Müşteri memnuniyetini öncelik kabul ederiz</p>
+                  <p className="text-gray-700 text-sm">• Sürekli iyileştirme ve verimlilik odaklı yönetim</p>
+                  <p className="text-gray-700 text-sm">• Kalite standartları ve teknik dokümantasyonlara uyum</p>
+                  <p className="text-gray-700 text-sm">• İş güvenliği ve çevreye saygı</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Section */}
+        <section id="services" className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Hizmetlerimiz</h2>
+              <div className="w-20 h-1 bg-blue-800 mx-auto"></div>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  title: "CNC Freze İşleme",
+                  description: "Hassas parça imalatı ve karmaşık geometrilerin işlenmesi",
+                  icon: <Settings className="h-8 w-8" />
+                },
+                {
+                  title: "CNC Torna İşleme", 
+                  description: "Silindirik ve dönel parçaların yüksek hassasiyetle üretimi",
+                  icon: <Factory className="h-8 w-8" />
+                },
+                {
+                  title: "Teknik Resim Uygulaması",
+                  description: "Teknik şartnamelere tam uygunluk ile özel parça üretimi",
+                  icon: <Award className="h-8 w-8" />
+                },
+                {
+                  title: "Prototip Üretim",
+                  description: "Hızlı prototip ve test parçası imalatı",
+                  icon: <CheckCircle className="h-8 w-8" />
+                },
+                {
+                  title: "Seri Üretim",
+                  description: "Küçük ve orta ölçekli seri üretim hizmetleri",
+                  icon: <Users className="h-8 w-8" />
+                },
+                {
+                  title: "Malzeme Çeşitliliği",
+                  description: "Çelik, alüminyum, paslanmaz, pirinç ile üretim",
+                  icon: <Settings className="h-8 w-8" />
+                }
+              ].map((service, index) => (
+                <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                  <div className="bg-blue-800 text-white p-3 rounded-lg w-fit mb-4">
+                    {service.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">{service.title}</h3>
+                  <p className="text-gray-600">{service.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Machines Section */}
+        <section id="machines" className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Makine Parkurumuz</h2>
+              <div className="w-20 h-1 bg-blue-800 mx-auto"></div>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  name: "TAKUMI PV-1052",
+                  type: "CNC Dik İşleme Merkezi",
+                  features: [
+                    "Tabla Ölçüsü: 1100 x 500 mm",
+                    "X/Y/Z Ekseni: 1000/520/500 mm",
+                    "Maks. Yük Kapasitesi: 800 kg",
+                    "Devir: 8000 rpm",
+                    "ATC Kapasitesi: 24 takım"
+                  ],
+                  image: "/assets/takumi-pv-1052.png"
+                },
+                {
+                  name: "SAMSUNG PL20/240/20MC",
+                  type: "CNC Torna Merkezi",
+                  features: [
+                    "İş Çapı: Ø520 mm",
+                    "İş Boyu: 2000 mm",
+                    "Maks. Dönüş Çapı: 680 mm",
+                    "Spindle Devri: 10-2500 rpm",
+                    "Spindle Motoru: 22/26 kW"
+                  ],
+                  image: "/assets/samsung-pl20-pl240.png"
+                },
+                {
+                  name: "HYUNDAI-WIA KF3500/5A",
+                  type: "5 Eksenli CNC Torna İşleme Merkezi",
+                  features: [
+                    "İş Çapı: Ø520 mm",
+                    "İş Boyu: 2000 mm",
+                    "Maks. Dönüş Çapı: 680 mm",
+                    "Spindle Devri: 10-2500 rpm",
+                    "Spindle Motoru: 22/26 kW",
+                  ],
+                  image: "/assets/hyundai-kf35005.jpg"
+                },
+                {
+                  name: "NURIS LN500W",
+                  type: "MIG/MAG Kaynak Makinesi",
+                  features: [
+                    "Sinerji kontrol", 
+                    "Double pulse", 
+                    "Yüksek verimlilik"
+                  ],
+                  count: 2,
+                  image: "/assets/ln500w-sinerjik-double-pulse.png"
+                },
+                {
+                  name: "MCS32",
+                  type: "Sütunlu Matkap Tezgahı",
+                  features: [
+                    "Maks. Matkap Çapı: 32 mm",
+                    "Masa Ölçüsü: 500 x 600 mm",
+                    "Maks. İş Yüksekliği: 450 mm",
+                    "Spindle Devri: 150-3000 rpm",
+                    "Motor Gücü: 2.2 kW"
+                  ],
+                  image: "/assets/mcs32-sutunlu-matkap-tezgahi.png"
+                },
+                {
+                  name: "MAGMAWELD RS500M",
+                  type: "Kaynak Makinesi",
+                  features: [
+                    "Kaynak Akımı: 20-500 A",
+                    "Çalışma Gerilimi: 3x400 V",
+                    "Boşta Çıkış Gerilimi: 55 V",
+                    "Duty Cycle: %60 @ 500A",
+                    "Ağırlık: 135 kg"
+                  ],
+                  image: "/assets/magmaweld-rs500m.png"
+                }
+              ].map((machine, index) => (
+                <div key={index} className="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition-shadow border border-gray-200">
+                  <div className="h-48 bg-gray-200 overflow-hidden">
+                    <img 
+                      src={machine.image || `https://placehold.co/400x300/1e40af/ffffff?text=${encodeURIComponent(machine.name)}`}
+                      alt={machine.name}
+                      className="w-full h-48 object-cover rounded-t-lg"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = `https://placehold.co/400x300/1e40af/ffffff?text=${encodeURIComponent(machine.name)}`;
+                      }}    
+                    />
+                  </div>
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800">{machine.name}</h3>
+                        <p className="text-blue-600 font-medium">{machine.type}</p>
+                      </div>
+                      {machine.count && (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                          {machine.count} adet
+                        </span>
+                      )}
+                    </div>
+                    <ul className="mt-4 space-y-2">
+                      {machine.features.map((feature, i) => (
+                        <li key={i} className="flex items-start">
+                          <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <span className="text-gray-700">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* References Section */}
+        <section id="references" className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Referanslarımız</h2>
+              <div className="w-20 h-1 bg-blue-800 mx-auto mb-6"></div>
+              <p className="text-gray-600 text-lg">İş birliği yaptığımız değerli firmalar</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { name: "TAAC", website: "taac.com.tr", image: "/assets/taachavacilik_logo.jpeg" },
+                { name: "İDAK", website: "idak.com.tr", image: "/assets/idak-logo.png" },
+                { name: "Altınay Savunma", website: "altinay.com", image: "/assets/altinay-savunma-logo.jpg" },
+                { name: "Öztürk PT", website: "ozturkpt.com", image: "/assets/ozturk-pt-logo-black.png" },
+                { name: "Gülöz Power Transmission", website: "guloz.com.tr", image: "/assets/guloz-guc-aktarma-logo.png" },
+                { name: "Akın Makine", website: "akinmakina.com.tr", image: "/assets/logo-akin-makina.svg" },
+                { name: "DLG Savunma", website: "dlg-tactical.com", image: "/assets/dlg-tactical.png" },
+                { name: "Hidmaksan", website: "hidmaksan.com", image: "/assets/hidmaksan.svg" }
+              ].map((ref, index) => (
+                <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center h-full flex flex-col">
+                  <div className="flex items-center justify-center h-32 mb-4">
+                    {ref.image ? (
+                      <img 
+                        src={ref.image} 
+                        alt={`${ref.name} logo`} 
+                        className="max-h-full max-w-full object-contain"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = `https://placehold.co/200x80/1e40af/ffffff?text=${encodeURIComponent(ref.name)}`;
+                          target.className = 'max-h-full max-w-full object-contain';
+                        }}
+                      />
+                    ) : (
+                      <div className="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center">
+                        <Factory className="h-12 w-12 text-blue-800" />
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-2">{ref.name}</h3>
+                  <a 
+                    href={`https://${ref.website}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-600 hover:text-blue-800 hover:underline mt-auto"
+                  >
+                    {ref.website}
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Certificates Section */}
+        <section id="certificates" className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Kalite Belgelerimiz</h2>
+              <div className="w-20 h-1 bg-blue-800 mx-auto mb-6"></div>
+              <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+                Üretim süreçlerimizde kaliteyi ve güvenliği en üst seviyede tutmak için aşağıdaki uluslararası standartlara uygun şekilde faaliyet göstermekteyiz
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  title: "ISO 9001:2015",
+                  subtitle: "Kalite Yönetim Sistemi",
+                  description: "Kalite yönetim sisteminin uluslararası standardı"
+                },
+                {
+                  title: "ISO 14001",
+                  subtitle: "Çevre Yönetim Sistemi", 
+                  description: "Çevresel performans ve sürdürülebilirlik standardı"
+                },
+                {
+                  title: "ISO 45001",
+                  subtitle: "İş Sağlığı ve Güvenliği",
+                  description: "Çalışan sağlığı ve güvenliği yönetim sistemi"
+                }
+              ].map((cert, index) => (
+                <div key={index} className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-lg text-center">
+                  <div className="bg-blue-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Award className="h-10 w-10 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">{cert.title}</h3>
+                  <h4 className="text-lg font-semibold text-blue-800 mb-4">{cert.subtitle}</h4>
+                  <p className="text-gray-600 text-sm">{cert.description}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-12 text-center">
+              <p className="text-gray-600 leading-relaxed max-w-4xl mx-auto">
+                Bu belgeler, ürünlerimizin ve hizmetlerimizin yüksek standartlarda olduğunu ve sürekli iyileştirme kültürünü benimsediğimizi göstermektedir.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section id="contact" className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">İletişim</h2>
+              <div className="w-20 h-1 bg-blue-800 mx-auto mb-6"></div>
+              <p className="text-gray-600 text-lg">Bizimle iletişime geçin, size yardımcı olmaktan mutluluk duyarız</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-12">
+              <div>
+                <h3 className="text-2xl font-semibold text-gray-800 mb-6">İletişim Bilgileri</h3>
+                <div className="space-y-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="bg-blue-800 p-3 rounded-lg">
+                      <MapPin className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 mb-1">Adres</h4>
+                      <p className="text-gray-600">Tatlıcak Mah, Nasihat Sokak No:1/BK<br />42030 Karatay / Konya</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-4">
+                    <div className="bg-blue-800 p-3 rounded-lg">
+                      <Phone className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 mb-1">Telefon</h4>
+                      <p className="text-gray-600">+90 553 217 22 46</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-4">
+                    <div className="bg-blue-800 p-3 rounded-lg">
+                      <Mail className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 mb-1">E-posta</h4>
+                      <p className="text-gray-600">info@rfmmakina.com</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white p-8 rounded-lg shadow-md">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-6">Bize Ulaşın</h3>
+                <form className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                      Ad Soyad *
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                      E-posta *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                      Telefon
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                      Mesaj *
+                    </label>
+                    <textarea
+                      id="message"
+                      rows={4}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    ></textarea>
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-800 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-900 transition-colors"
+                  >
+                    Mesaj Gönder
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="bg-blue-800 p-2 rounded-lg">
+                  <Factory className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold">RFM Makina</h3>
+                  <p className="text-sm text-gray-300">Talaşlı İmalat</p>
+                </div>
+              </div>
+              <p className="text-gray-300 text-sm">
+                Talaşlı imalatta hassas çözüm ortağınız. Yüksek kalite ve güvenilir hizmet.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">İletişim</h4>
+              <div className="space-y-2 text-sm text-gray-300">
+                <p>Tatlıcak Mah, Nasihat Sokak No:1/BK</p>
+                <p>42030 Karatay / Konya</p>
+                <p>+90 553 217 22 46</p>
+                <p>info@rfmmakina.com</p>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">Kalite Standartları</h4>
+              <div className="space-y-2 text-sm text-gray-300">
+                <p>ISO 9001:2015</p>
+                <p>ISO 14001</p>
+                <p>ISO 45001</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-700 mt-8 pt-8 text-center">
+            <p className="text-gray-300 text-sm">
+              © 2025 RFM Makina. Tüm hakları saklıdır.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+export default App;
