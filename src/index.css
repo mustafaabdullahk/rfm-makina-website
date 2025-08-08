@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Tüm sayfa için temel kaydırma çubuğu stilleri */
+html {
+  scrollbar-width: auto; /* Firefox için varsayılan, daha kalın */
+  scrollbar-color: var(--scrollbar-thumb-color, #3b82f6) #f3f4f6; /* Başlık ve iz rengi, varsayılan mavi */
+  transition: scrollbar-color 0.3s ease;
+}
+
+/* Tüm Webkit tarayıcılar için temel stiller */
+html::-webkit-scrollbar {
+  width: 12px; /* Genişlik */
+}
+
+html::-webkit-scrollbar-track {
+  background: #f3f4f6; /* Açık gri iz (Tailwind gray-100) */
+}
+
+/* Renk sınıfları */
+html::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color, #3b82f6); /* CSS değişkeni ile renk */
+  border-radius: 4px; /* Yuvarlak köşeler */
+  transition: background-color 0.3s ease; /* Renk geçiş efekti */
+}
+
+/* Renk sınıfları */
+.scrollbar-blue {
+  --scrollbar-thumb-color: #3b82f6; /* Tailwind blue-500 */
+}
+.scrollbar-green {
+  --scrollbar-thumb-color: #22c55e; /* Tailwind green-500 */
+}
+.scrollbar-red {
+  --scrollbar-thumb-color: #ef4444; /* Tailwind red-500 */
+}
+.scrollbar-orange {
+  --scrollbar-thumb-color: #f97316; /* Tailwind orange-500 */
+}

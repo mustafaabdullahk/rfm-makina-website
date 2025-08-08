@@ -5,4 +5,11 @@ export default {
     extend: {},
   },
   plugins: [],
+  safelist: [
+    'scrollbar-blue',
+    'scrollbar-green',
+    'scrollbar-red',
+    'scrollbar-orange',
+    // Eğer başka renkler eklediyseniz, onları da buraya ekleyin
+  ],
 };

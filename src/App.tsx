@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Phone, Mail, MapPin, Settings, Award, Users, Factory, CheckCircle } from 'lucide-react';
 
 function App() {
@@ -6,6 +6,70 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [pauseAutoSlide, setPauseAutoSlide] = useState(false);
+  
+  // Ref to hold the sections for IntersectionObserver
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  // Map sections to scrollbar color classes
+  const sectionColors: Record<string, string> = {
+    home: 'scrollbar-blue',
+    about: 'scrollbar-orange',
+    services: 'scrollbar-green',
+    machines: 'scrollbar-blue',
+    references: 'scrollbar-red',
+    certificates: 'scrollbar-orange',
+    contact: 'scrollbar-green'
+  };
+
+  // --- useEffect to handle scrollbar color change ---
+  useEffect(() => {
+    const currentClassName = sectionColors[activeSection];
+    const htmlElement = document.documentElement;
+
+    // Remove previous scrollbar classes
+    Object.values(sectionColors).forEach(colorClass => {
+      htmlElement.classList.remove(colorClass);
+    });
+
+    // Add the new scrollbar class
+    if (currentClassName) {
+      htmlElement.classList.add(currentClassName);
+    }
+  }, [activeSection]);
+
+  // --- useEffect to handle IntersectionObserver ---
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      {
+        root: null, // viewport
+        rootMargin: '0px',
+        threshold: 0.5, // 50% of the section must be visible
+      }
+    );
+
+    // Observe all sections
+    Object.keys(sectionRefs.current).forEach((key) => {
+      if (sectionRefs.current[key]) {
+        observer.observe(sectionRefs.current[key]);
+      }
+    });
+
+    // Cleanup function
+    return () => {
+      Object.keys(sectionRefs.current).forEach((key) => {
+        if (sectionRefs.current[key]) {
+          observer.unobserve(sectionRefs.current[key]);
+        }
+      });
+    };
+  }, []); // Run only once on mount
 
   // Auto-advance carousel every 5 seconds
   useEffect(() => {
@@ -19,7 +83,7 @@ function App() {
   }, [pauseAutoSlide]);
 
   const scrollToSection = (sectionId: string) => {
-    setActiveSection(sectionId);
+    // The IntersectionObserver will handle setActiveSection, so we just need to scroll
     setIsMobileMenuOpen(false);
     const element = document.getElementById(sectionId);
     if (element) {
@@ -67,39 +131,42 @@ function App() {
               </div>
             </div>
             
-            {/* Desktop Menu */}
-            <nav className="hidden md:flex space-x-2">
-              {menuItems.map((item) => (
-                <div key={item.id} className="relative">
-                  <button
-                    onClick={() => scrollToSection(item.id)}
-                    className={`px-6 py-3 text-base font-medium rounded-md transition-all duration-300 ${
-                      activeSection === item.id
-                        ? 'text-blue-700 bg-blue-50 font-semibold pl-8 pr-6 shadow-sm'
-                        : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50 hover:pl-8'
-                    }`}
-                  >
-                    {activeSection === item.id && (
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 rounded-full transition-all duration-300"></span>
-                    )}
-                    <span className="relative z-10">
-                      {item.label}
+            {/* Desktop Menu and Mobile Menu Button Group */}
+            <div className="flex items-center">
+              {/* Desktop Menu */}
+              <nav className="hidden md:flex space-x-2">
+                {menuItems.map((item) => (
+                  <div key={item.id} className="relative">
+                    <button
+                      onClick={() => scrollToSection(item.id)}
+                      className={`px-6 py-3 text-base font-medium rounded-md transition-all duration-300 ${
+                        activeSection === item.id
+                          ? 'text-blue-700 bg-blue-50 font-semibold pl-8 pr-6 shadow-sm'
+                          : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50 hover:pl-8'
+                      }`}
+                    >
                       {activeSection === item.id && (
-                        <span className="absolute -right-1 -top-1 w-2 h-2 bg-blue-600 rounded-full animate-ping"></span>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 rounded-full transition-all duration-300"></span>
                       )}
-                    </span>
-                  </button>
-                </div>
-              ))}
-            </nav>
+                      <span className="relative z-10">
+                        {item.label}
+                        {activeSection === item.id && (
+                          <span className="absolute -right-1 -top-1 w-2 h-2 bg-blue-600 rounded-full animate-ping"></span>
+                        )}
+                      </span>
+                    </button>
+                  </div>
+                ))}
+              </nav>
 
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+              {/* Mobile Menu Button */}
+              <button
+                className="md:hidden p-2"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            </div>
           </div>
 
           {/* Mobile Menu */}
@@ -137,7 +204,7 @@ function App() {
       {/* Main Content */}
       <main className="pt-20">
         {/* Home Section with Carousel */}
-        <section id="home" className="relative h-screen">
+        <section id="home" ref={(el) => (sectionRefs.current.home = el)} className="relative h-screen">
           <div className="absolute inset-0 overflow-hidden">
             <div className="relative h-full w-full">
               {/* Carousel Images */}
@@ -226,7 +293,7 @@ function App() {
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-20 bg-white">
+        <section id="about" ref={(el) => (sectionRefs.current.about = el)} className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Hakkımızda</h2>
@@ -298,7 +365,7 @@ function App() {
         </section>
 
         {/* Services Section */}
-        <section id="services" className="py-20 bg-gray-50">
+        <section id="services" ref={(el) => (sectionRefs.current.services = el)} className="py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Hizmetlerimiz</h2>
@@ -351,7 +418,7 @@ function App() {
         </section>
 
         {/* Machines Section */}
-        <section id="machines" className="py-20 bg-white">
+        <section id="machines" ref={(el) => (sectionRefs.current.machines = el)} className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Makine Parkurumuz</h2>
@@ -472,7 +539,7 @@ function App() {
         </section>
 
         {/* References Section */}
-        <section id="references" className="py-20 bg-gray-50">
+        <section id="references" ref={(el) => (sectionRefs.current.references = el)} className="py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Referanslarımız</h2>
@@ -526,7 +593,7 @@ function App() {
         </section>
 
         {/* Certificates Section */}
-        <section id="certificates" className="py-20 bg-white">
+        <section id="certificates" ref={(el) => (sectionRefs.current.certificates = el)} className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Kalite Belgelerimiz</h2>
@@ -574,7 +641,7 @@ function App() {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="py-20 bg-gray-50">
+        <section id="contact" ref={(el) => (sectionRefs.current.contact = el)} className="py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">İletişim</h2>
@@ -655,7 +722,7 @@ function App() {
                   </div>
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      Mesaj *
+                      Mesajınız *
                     </label>
                     <textarea
                       id="message"
@@ -666,9 +733,9 @@ function App() {
                   </div>
                   <button
                     type="submit"
-                    className="w-full bg-blue-800 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-900 transition-colors"
+                    className="w-full bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                   >
-                    Mesaj Gönder
+                    Gönder
                   </button>
                 </form>
               </div>
@@ -676,51 +743,11 @@ function App() {
           </div>
         </section>
       </main>
-
+      
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="bg-blue-800 p-2 rounded-lg">
-                  <Factory className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold">RFM Makina</h3>
-                  <p className="text-sm text-gray-300">Talaşlı İmalat</p>
-                </div>
-              </div>
-              <p className="text-gray-300 text-sm">
-                Talaşlı imalatta hassas çözüm ortağınız. Yüksek kalite ve güvenilir hizmet.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4">İletişim</h4>
-              <div className="space-y-2 text-sm text-gray-300">
-                <p>Tatlıcak Mah, Nasihat Sokak No:1/BK</p>
-                <p>42030 Karatay / Konya</p>
-                <p>+90 553 217 22 46</p>
-                <p>info@rfmmakina.com</p>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Kalite Standartları</h4>
-              <div className="space-y-2 text-sm text-gray-300">
-                <p>ISO 9001:2015</p>
-                <p>ISO 14001</p>
-                <p>ISO 45001</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-            <p className="text-gray-300 text-sm">
-              © 2025 RFM Makina. Tüm hakları saklıdır.
-            </p>
-          </div>
+      <footer className="bg-gray-800 text-white py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+          <p>&copy; 2024 RFM Makina. Tüm hakları saklıdır.</p>
         </div>
       </footer>
     </div>
