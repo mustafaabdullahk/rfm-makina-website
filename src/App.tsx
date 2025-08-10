@@ -118,12 +118,12 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-lg fixed w-full top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="bg-white shadow-lg fixed w-full top-0 z-50 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto w-full">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="bg-blue-800 p-2 rounded-lg">
-                <Factory className="h-8 w-8 text-white" />
+              <div className="w-18 h-16 flex items-center justify-center">
+                <img src="/assets/rfm-makina-logo.png" alt="RFM Makina Logo" className="h-full w-full object-contain" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">RFM Makina</h1>
@@ -132,7 +132,7 @@ function App() {
             </div>
             
             {/* Desktop Menu and Mobile Menu Button Group */}
-            <div className="flex items-center">
+            <div className="flex items-center justify-end">
               {/* Desktop Menu */}
               <nav className="hidden md:flex space-x-2">
                 {menuItems.map((item) => (
@@ -177,14 +177,14 @@ function App() {
                   <li key={item.id} className="relative">
                     <button
                       onClick={() => scrollToSection(item.id)}
-                      className={`block w-full text-left px-6 py-3 text-base font-medium rounded-md transition-all duration-300 ${
+                      className={`block w-full text-right px-6 py-3 text-base font-medium rounded-md transition-all duration-300 ${
                         activeSection === item.id
-                          ? 'text-blue-700 bg-blue-50 font-semibold pl-8'
-                          : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50 hover:pl-8'
+                          ? 'text-blue-700 bg-blue-50 font-semibold pr-8'
+                          : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50 hover:pr-8'
                       }`}
                     >
                       {activeSection === item.id && (
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 rounded-full transition-all duration-300"></span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 rounded-full transition-all duration-300"></span>
                       )}
                       <span className="relative z-10">
                         {item.label}
