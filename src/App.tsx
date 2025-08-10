@@ -303,13 +303,13 @@ function App() {
             <div className="grid md:grid-cols-2 gap-12 mb-16">
               <div>
                 <p className="text-gray-700 leading-relaxed mb-6">
-                  2022 yılından bu yana talaşlı imalat sektöründe faaliyet gösteren RFM Makina, farklı sektörlerdeki müşterilerine yüksek hassasiyetli parça üretimi sunan bir mühendislik firması olarak hizmet vermektedir.
+                  2022 yılından bu yana talaşlı imalat sektöründe faaliyet gösteren RFM Makina, farklı sektörlerdeki müşterilerine yüksek hassasiyetli parça üretimi sunan bir mühendislik firması olarak hizmet verilmektedir.
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-6">
-                  Savunma sanayii başta olmak üzere; endüstriyel hidrolik sistemler, tarımsal sulama sistemleri, kalıp üretimi ve otomotiv sektörü gibi çeşitli alanlarda teknik resme uygun, kaliteli ve zamanında üretim gerçekleştirmektedir.
+                  Savunma sanayii başta olmak üzere; endüstriyel hidrolik sistemler, tarımsal sulama sistemleri, kalıp üretimi ve otomotiv sektörü gibi çeşitli alanlarda teknik resme uygun, kaliteli ve zamanında üretim gerçekleştirilmektedir.
                 </p>
                 <p className="text-gray-700 leading-relaxed">
-                  CNC freze ve CNC torna tezgâhlarımız ile hem prototip hem de küçük/orta ölçekli seri üretim süreçlerinde çözüm ortağı olarak hizmet vermekteyiz.
+                  CNC freze ve CNC torna tezgâhlarımız ile hem prototip hem de küçük/orta ölçekli seri üretim süreçlerinde çözüm ortağı olarak hizmet verilmektedir.
                 </p>
               </div>
               <div className="bg-gray-50 p-8 rounded-lg">
@@ -318,7 +318,7 @@ function App() {
                   <h3 className="text-xl font-semibold text-gray-800">Değerlerimiz</h3>
                 </div>
                 <p className="text-gray-700 leading-relaxed">
-                  Kalite, güven ve sürdürülebilirlik değerlerini esas alarak, her geçen gün daha gelişmiş teknolojilerle üretim kabiliyetimizi artırmaktayız.
+                  Kalite, güven ve sürdürülebilirlik değerlerini esas alarak, her geçen gün daha gelişmiş teknolojilerle üretim kabiliyetimiz artırılmaktadır.
                 </p>
               </div>
             </div>
@@ -558,12 +558,17 @@ function App() {
                 { name: "DLG Savunma", website: "dlg-tactical.com", image: "/assets/dlg-tactical.png" },
                 { name: "Hidmaksan", website: "hidmaksan.com", image: "/assets/hidmaksan.svg" }
               ].map((ref, index) => (
-                <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center h-full flex flex-col">
-                  <div className="flex items-center justify-center h-32 mb-4">
+                <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center h-full flex flex-col justify-center items-center">
+                  <a
+                    href={`https://${ref.website}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center h-32 w-full"
+                  >
                     {ref.image ? (
-                      <img 
-                        src={ref.image} 
-                        alt={`${ref.name} logo`} 
+                      <img
+                        src={ref.image}
+                        alt={`${ref.name} logo`}
                         className="max-h-full max-w-full object-contain"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -576,15 +581,6 @@ function App() {
                         <Factory className="h-12 w-12 text-blue-800" />
                       </div>
                     )}
-                  </div>
-                  <h3 className="font-semibold text-gray-800 mb-2">{ref.name}</h3>
-                  <a 
-                    href={`https://${ref.website}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:text-blue-800 hover:underline mt-auto"
-                  >
-                    {ref.website}
                   </a>
                 </div>
               ))}
@@ -599,7 +595,7 @@ function App() {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Kalite Belgelerimiz</h2>
               <div className="w-20 h-1 bg-blue-800 mx-auto mb-6"></div>
               <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-                Üretim süreçlerimizde kaliteyi ve güvenliği en üst seviyede tutmak için aşağıdaki uluslararası standartlara uygun şekilde faaliyet göstermekteyiz
+                Üretim süreçlerimizde kaliteyi ve güvenliği en üst seviyede tutmak için aşağıdaki uluslararası standartlara uygun şekilde faaliyet gösterilmektedir.
               </p>
             </div>
 
