@@ -83,7 +83,7 @@ function App() {
     if (pauseAutoSlide) return;
 
     const timer = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % 2);
+      setCurrentSlide(prev => (prev + 1) % 3);
     }, 5000);
 
     return () => clearInterval(timer);
@@ -98,8 +98,8 @@ function App() {
   };
 
   const goToSlide = (index: number) => setCurrentSlide(index);
-  const goToPrevSlide = (e: React.MouseEvent) => { e.stopPropagation(); setCurrentSlide(prev => (prev - 1 + 2) % 2); };
-  const goToNextSlide = (e: React.MouseEvent) => { e.stopPropagation(); setCurrentSlide(prev => (prev + 1) % 2); };
+  const goToPrevSlide = (e: React.MouseEvent) => { e.stopPropagation(); setCurrentSlide(prev => (prev - 1 + 3) % 3); };
+  const goToNextSlide = (e: React.MouseEvent) => { e.stopPropagation(); setCurrentSlide(prev => (prev + 1) % 3); };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -257,7 +257,7 @@ function App() {
                 </button>
 
                 <div className="absolute bottom-10 left-0 right-0 flex justify-center space-x-3 z-10">
-                  {[0, 1].map((index) => (
+                  {[0, 1, 2].map((index) => (
                     <button
                       key={index}
                       onClick={() => goToSlide(index)}
@@ -357,8 +357,10 @@ function App() {
                 { title: "Center ve Lineer Pivot Sulama Sistemi", description: "Tarımsal üretimde verimliliği ve sürdürülebilirliği hedefleyen, ihtiyaca uygun otonom sulama sistemleri gerçekleştirilmektedir. Koşullara bağlı olarak özelleştirilen ürünün gerekli mühendislik çalışmaları ve özel üretimi yapılmaktadır.\n\nRFM Lineer Sulama Sistemleri:\n• Geniş alanlarda eşit ve verimli sulama\n• Modüler yapı ile her araziye uyum\n• Dayanıklı çelik konstrüksiyon\n\nRFM Center Pivot Sulama Sistemleri:\n• Dairesel alanlarda maksimum verimlilik\n• Minimum iş gücü, düşük bakım\n• Otomasyon desteği\n\nİhtiyaca Özel Otonom Makineler:\n• Tamamen proje bazlı tasarım ve üretim\n• Uzaktan kontrol ve yapay zeka desteği\n• Endüstriyel, tarımsal ve özel kullanım alanları\n• Yüksek enerji verimliliği", icon: <Factory className="h-8 w-8" /> }
               ].map((service, index) => (
                 <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                  <div className="bg-blue-800 text-white p-3 rounded-lg w-fit mb-4">{service.icon}</div>
-                  <h3 className="text-2xl font-semibold text-gray-800 mb-4">{service.title}</h3>
+                  <div className="flex items-center mb-4">
+                    <div className="bg-blue-800 text-white p-3 rounded-lg w-fit mr-4">{service.icon}</div>
+                    <h3 className="text-2xl font-semibold text-gray-800">{service.title}</h3>
+                  </div>
                   <p className="text-gray-600 whitespace-pre-wrap">{service.description}</p>
                 </div>
               ))}
