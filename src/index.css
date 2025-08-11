@@ -2,39 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Tüm sayfa için temel kaydırma çubuğu stilleri */
+/*
+ * =================================================================================================
+ * Scrollbar Stilleri
+ * =================================================================================================
+ * - Webkit (Chrome, Safari, Edge) ve Firefox tarayıcılarını destekler.
+ * - JavaScript ile `<html>` etiketine eklenen sınıflara göre renk değiştirir.
+ * - Varsayılan renk mavidir.
+ */
+
+/* --- Genel Scrollbar Ayarları --- */
 html {
-  scrollbar-width: auto; /* Firefox için varsayılan, daha kalın */
-  scrollbar-color: var(--scrollbar-thumb-color, #3b82f6) #f3f4f6; /* Başlık ve iz rengi, varsayılan mavi */
-  transition: scrollbar-color 0.3s ease;
+  /* Firefox için scrollbar genişliği ve varsayılan renkleri */
+  scrollbar-width: thin; /* 'auto' veya 'thin' olabilir */
+  scrollbar-color: #3b82f6 #f3f4f6; /* Varsayılan: Mavi thumb, açık gri track */
+  
+  /* Scrollbar rengi değiştiğinde yumuşak bir geçiş sağlar */
+  transition: scrollbar-color 0.5s ease;
 }
 
-/* Tüm Webkit tarayıcılar için temel stiller */
+/* --- Webkit Tarayıcıları için Stiller (Chrome, Safari, Edge) --- */
+
+/* Scrollbar'ın kendisi */
 html::-webkit-scrollbar {
-  width: 12px; /* Genişlik */
+  width: 14px; /* Scrollbar genişliği */
 }
 
+/* Scrollbar'ın arka planı (iz) */
 html::-webkit-scrollbar-track {
-  background: #f3f4f6; /* Açık gri iz (Tailwind gray-100) */
+  background: #f3f4f6; /* Açık gri (Tailwind gray-100) */
 }
 
-/* Renk sınıfları */
+/* Scrollbar'ın hareket eden kısmı (başparmak) */
 html::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb-color, #3b82f6); /* CSS değişkeni ile renk */
-  border-radius: 4px; /* Yuvarlak köşeler */
-  transition: background-color 0.3s ease; /* Renk geçiş efekti */
+  background-color: var(--scrollbar-thumb-color, #3b82f6); /* Varsayılan renk (mavi) için bir CSS değişkeni kullanır */
+  border-radius: 10px; /* Köşeleri yuvarlatır */
+  border: 3px solid #f3f4f6; /* Track ile aynı renkte bir kenarlık ekleyerek dolgu efekti yaratır */
+  
+  /* Renk değişiminde yumuşak geçiş */
+  transition: background-color 0.5s ease;
 }
 
-/* Renk sınıfları */
-.scrollbar-blue {
-  --scrollbar-thumb-color: #3b82f6; /* Tailwind blue-500 */
+html::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover-color, #2563eb); /* Üzerine gelindiğinde biraz daha koyu bir renk */
 }
-.scrollbar-green {
-  --scrollbar-thumb-color: #22c55e; /* Tailwind green-500 */
+
+
+/* --- Bölümlere Özel Renk Sınıfları --- */
+
+/* Mavi (Anasayfa, Makine Parkuru) */
+html.scrollbar-blue {
+  --scrollbar-thumb-color: #3b82f6; /* blue-500 */
+  --scrollbar-thumb-hover-color: #2563eb; /* blue-600 */
+  scrollbar-color: #3b82f6 #f3f4f6;
 }
-.scrollbar-red {
-  --scrollbar-thumb-color: #ef4444; /* Tailwind red-500 */
+
+/* Turuncu (Hakkımızda, Kalite Belgeleri) */
+html.scrollbar-orange {
+  --scrollbar-thumb-color: #f97316; /* orange-500 */
+  --scrollbar-thumb-hover-color: #ea580c; /* orange-600 */
+  scrollbar-color: #f97316 #f3f4f6;
 }
-.scrollbar-orange {
-  --scrollbar-thumb-color: #f97316; /* Tailwind orange-500 */
+
+/* Yeşil (Hizmetler, İletişim) */
+html.scrollbar-green {
+  --scrollbar-thumb-color: #22c55e; /* green-500 */
+  --scrollbar-thumb-hover-color: #16a34a; /* green-600 */
+  scrollbar-color: #22c55e #f3f4f6;
+}
+
+/* Kırmızı (Referanslar) */
+html.scrollbar-red {
+  --scrollbar-thumb-color: #ef4444; /* red-500 */
+  --scrollbar-thumb-hover-color: #dc2626; /* red-600 */
+  scrollbar-color: #ef4444 #f3f4f6;
 }

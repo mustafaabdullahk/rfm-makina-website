@@ -6,34 +6,43 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [pauseAutoSlide, setPauseAutoSlide] = useState(false);
-  
-  // Ref to hold the sections for IntersectionObserver
+
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
-  // Map sections to scrollbar color classes
-  const sectionColors: Record<string, string> = {
-    home: 'scrollbar-blue',
-    about: 'scrollbar-orange',
-    services: 'scrollbar-green',
-    machines: 'scrollbar-blue',
-    references: 'scrollbar-red',
-    certificates: 'scrollbar-orange',
-    contact: 'scrollbar-green'
+  const menuItems = [
+    { id: 'home', label: 'Anasayfa' },
+    { id: 'about', label: 'Hakkımızda' },
+    { id: 'services', label: 'Hizmetler' },
+    { id: 'machines', label: 'Makine Parkuru' },
+    { id: 'references', label: 'Referanslar' },
+    { id: 'certificates', label: 'Kalite Belgeleri' },
+    { id: 'contact', label: 'İletişim' }
+  ];
+
+  // --- Configuration for section-specific colors ---
+  const sectionColorConfig: Record<string, { scrollbar: string; bg: string; }> = {
+    home: { scrollbar: 'scrollbar-blue', bg: 'bg-blue-500' },
+    about: { scrollbar: 'scrollbar-orange', bg: 'bg-orange-500' },
+    services: { scrollbar: 'scrollbar-green', bg: 'bg-green-500' },
+    machines: { scrollbar: 'scrollbar-blue', bg: 'bg-blue-500' },
+    references: { scrollbar: 'scrollbar-red', bg: 'bg-red-500' },
+    certificates: { scrollbar: 'scrollbar-orange', bg: 'bg-orange-500' },
+    contact: { scrollbar: 'scrollbar-green', bg: 'bg-green-500' }
   };
 
   // --- useEffect to handle scrollbar color change ---
   useEffect(() => {
-    const currentClassName = sectionColors[activeSection];
+    const currentConfig = sectionColorConfig[activeSection];
     const htmlElement = document.documentElement;
 
-    // Remove previous scrollbar classes
-    Object.values(sectionColors).forEach(colorClass => {
-      htmlElement.classList.remove(colorClass);
+    // Remove all previous scrollbar classes
+    Object.values(sectionColorConfig).forEach(config => {
+      htmlElement.classList.remove(config.scrollbar);
     });
 
     // Add the new scrollbar class
-    if (currentClassName) {
-      htmlElement.classList.add(currentClassName);
+    if (currentConfig) {
+      htmlElement.classList.add(currentConfig.scrollbar);
     }
   }, [activeSection]);
 
@@ -48,20 +57,18 @@ function App() {
         });
       },
       {
-        root: null, // viewport
-        rootMargin: '0px',
-        threshold: 0.5, // 50% of the section must be visible
+        root: null, // Observe from the viewport
+        rootMargin: '-80px 0px 0px 0px', // Account for the 80px fixed header
+        threshold: 0.2, // Trigger when 20% of the section is visible
       }
     );
 
-    // Observe all sections
     Object.keys(sectionRefs.current).forEach((key) => {
       if (sectionRefs.current[key]) {
         observer.observe(sectionRefs.current[key]);
       }
     });
 
-    // Cleanup function
     return () => {
       Object.keys(sectionRefs.current).forEach((key) => {
         if (sectionRefs.current[key]) {
@@ -69,81 +76,80 @@ function App() {
         }
       });
     };
-  }, []); // Run only once on mount
+  }, []);
 
-  // Auto-advance carousel every 5 seconds
+  // --- useEffect for auto-advancing carousel ---
   useEffect(() => {
     if (pauseAutoSlide) return;
-    
+
     const timer = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % 2);
     }, 5000);
-    
+
     return () => clearInterval(timer);
   }, [pauseAutoSlide]);
 
   const scrollToSection = (sectionId: string) => {
-    // The IntersectionObserver will handle setActiveSection, so we just need to scroll
     setIsMobileMenuOpen(false);
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
-  
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-  };
-  
-  const goToPrevSlide = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentSlide(prev => (prev - 1 + 2) % 2);
-  };
-  
-  const goToNextSlide = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentSlide(prev => (prev + 1) % 2);
-  };
 
-  const menuItems = [
-    { id: 'home', label: 'Anasayfa' },
-    { id: 'about', label: 'Hakkımızda' },
-    { id: 'services', label: 'Hizmetler' },
-    { id: 'machines', label: 'Makine Parkuru' },
-    { id: 'references', label: 'Referanslar' },
-    { id: 'certificates', label: 'Kalite Belgeleri' },
-    { id: 'contact', label: 'İletişim' }
-  ];
+  const goToSlide = (index: number) => setCurrentSlide(index);
+  const goToPrevSlide = (e: React.MouseEvent) => { e.stopPropagation(); setCurrentSlide(prev => (prev - 1 + 2) % 2); };
+  const goToNextSlide = (e: React.MouseEvent) => { e.stopPropagation(); setCurrentSlide(prev => (prev + 1) % 2); };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      {/* --- Scroll Spy Navigation --- */}
+      <nav className="fixed top-1/2 right-0 -translate-y-1/2 z-40 pr-2 md:pr-4 py-4">
+        <ul className="flex flex-col items-center space-y-3 md:space-y-4">
+          {menuItems.map((item) => (
+            <li key={`${item.id}-spy`} className="relative group flex items-center">
+              {/* Tooltip for Desktop */}
+              <div className="absolute top-1/2 -translate-y-1/2 right-full mr-3 px-3 py-1 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none hidden md:block">
+                {item.label}
+                <div className="absolute top-1/2 -translate-y-1/2 right-[-5px] w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-l-4 border-l-gray-800"></div>
+              </div>
+              {/* The Dot */}
+              <button
+                onClick={() => scrollToSection(item.id)}
+                className={`block w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ease-in-out ${activeSection === item.id
+                    ? `${sectionColorConfig[item.id].bg} scale-150`
+                    : 'bg-gray-400 group-hover:bg-gray-600'
+                  }`}
+                aria-label={`Git: ${item.label}`}
+              />
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* --- Header --- */}
       <header className="bg-white shadow-lg fixed w-full top-0 z-50 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto w-full">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-18 h-16 flex items-center justify-center">
+              <div className="w-19 h-14 flex items-center justify-center">
                 <img src="/assets/rfm-makina-logo.png" alt="RFM Makina Logo" className="h-full w-full object-contain" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">RFM Makina</h1>
-                <p className="text-sm text-gray-600">Talaşlı İmalat</p>
               </div>
             </div>
-            
-            {/* Desktop Menu and Mobile Menu Button Group */}
+
             <div className="flex items-center justify-end">
-              {/* Desktop Menu */}
               <nav className="hidden md:flex space-x-2">
                 {menuItems.map((item) => (
                   <div key={item.id} className="relative">
                     <button
                       onClick={() => scrollToSection(item.id)}
-                      className={`px-6 py-3 text-base font-medium rounded-md transition-all duration-300 ${
-                        activeSection === item.id
+                      className={`px-6 py-3 text-base font-medium rounded-md transition-all duration-300 ${activeSection === item.id
                           ? 'text-blue-700 bg-blue-50 font-semibold pl-8 pr-6 shadow-sm'
                           : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50 hover:pl-8'
-                      }`}
+                        }`}
                     >
                       {activeSection === item.id && (
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 rounded-full transition-all duration-300"></span>
@@ -159,7 +165,6 @@ function App() {
                 ))}
               </nav>
 
-              {/* Mobile Menu Button */}
               <button
                 className="md:hidden p-2"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -169,7 +174,6 @@ function App() {
             </div>
           </div>
 
-          {/* Mobile Menu */}
           {isMobileMenuOpen && (
             <div className="md:hidden py-4 border-t">
               <ul>
@@ -177,11 +181,10 @@ function App() {
                   <li key={item.id} className="relative">
                     <button
                       onClick={() => scrollToSection(item.id)}
-                      className={`block w-full text-right px-6 py-3 text-base font-medium rounded-md transition-all duration-300 ${
-                        activeSection === item.id
+                      className={`block w-full text-right px-6 py-3 text-base font-medium rounded-md transition-all duration-300 ${activeSection === item.id
                           ? 'text-blue-700 bg-blue-50 font-semibold pr-8'
                           : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50 hover:pr-8'
-                      }`}
+                        }`}
                     >
                       {activeSection === item.id && (
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 rounded-full transition-all duration-300"></span>
@@ -201,35 +204,24 @@ function App() {
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* --- Main Content --- */}
       <main className="pt-20">
         {/* Home Section with Carousel */}
         <section id="home" ref={(el) => (sectionRefs.current.home = el)} className="relative h-screen">
           <div className="absolute inset-0 overflow-hidden">
             <div className="relative h-full w-full">
-              {/* Carousel Images */}
               <div className="relative h-full w-full" onMouseEnter={() => setPauseAutoSlide(true)} onMouseLeave={() => setPauseAutoSlide(false)}>
                 {[
-                  {
-                    image: "./assets/hurjet.jpg",
-                    alt: "Hürjet",
-                    title: "Hürjet",
-                    subtitle: "Türk Havacılık ve Uzay Sanayii tarafından geliştirilen jet eğitim ve hafif taarruz uçağı"
-                  },
-                  {
-                    image: "./assets/kaan.jpg",
-                    alt: "KAAN",
-                    title: "KAAN",
-                    subtitle: "Türkiye'nin 5. nesil savaş uçağı projesi"
-                  }
+                  { image: "./assets/hurjet.jpg", alt: "Hürjet" },
+                  { image: "./assets/kaan.jpg", alt: "KAAN" }
                 ].map((slide, index) => (
-                  <div 
+                  <div
                     key={index}
                     className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${currentSlide === index ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                   >
-                    <img 
-                      src={slide.image} 
-                      alt={slide.alt} 
+                    <img
+                      src={slide.image}
+                      alt={slide.alt}
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -255,31 +247,17 @@ function App() {
                     </div>
                   </div>
                 ))}
-                
-                {/* Navigation Arrows */}
-                <button 
-                  onClick={goToPrevSlide}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10"
-                  aria-label="Önceki slayt"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
+
+                <button onClick={goToPrevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10" aria-label="Önceki slayt">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 </button>
-                <button 
-                  onClick={goToNextSlide}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10"
-                  aria-label="Sonraki slayt"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                <button onClick={goToNextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10" aria-label="Sonraki slayt">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 </button>
-                
-                {/* Carousel Navigation Dots */}
+
                 <div className="absolute bottom-10 left-0 right-0 flex justify-center space-x-3 z-10">
                   {[0, 1].map((index) => (
-                    <button 
+                    <button
                       key={index}
                       onClick={() => goToSlide(index)}
                       className={`w-3 h-3 rounded-full transition-all ${currentSlide === index ? 'bg-white w-8' : 'bg-white bg-opacity-30 hover:bg-opacity-70'}`}
@@ -374,41 +352,15 @@ function App() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
-                {
-                  title: "CNC Freze İşleme",
-                  description: "Hassas parça imalatı ve karmaşık geometrilerin işlenmesi",
-                  icon: <Settings className="h-8 w-8" />
-                },
-                {
-                  title: "CNC Torna İşleme", 
-                  description: "Silindirik ve dönel parçaların yüksek hassasiyetle üretimi",
-                  icon: <Factory className="h-8 w-8" />
-                },
-                {
-                  title: "Teknik Resim Uygulaması",
-                  description: "Teknik şartnamelere tam uygunluk ile özel parça üretimi",
-                  icon: <Award className="h-8 w-8" />
-                },
-                {
-                  title: "Prototip Üretim",
-                  description: "Hızlı prototip ve test parçası imalatı",
-                  icon: <CheckCircle className="h-8 w-8" />
-                },
-                {
-                  title: "Seri Üretim",
-                  description: "Küçük ve orta ölçekli seri üretim hizmetleri",
-                  icon: <Users className="h-8 w-8" />
-                },
-                {
-                  title: "Malzeme Çeşitliliği",
-                  description: "Çelik, alüminyum, paslanmaz, pirinç ile üretim",
-                  icon: <Settings className="h-8 w-8" />
-                }
+                { title: "CNC Freze İşleme", description: "Hassas parça imalatı ve karmaşık geometrilerin işlenmesi", icon: <Settings className="h-8 w-8" /> },
+                { title: "CNC Torna İşleme", description: "Silindirik ve dönel parçaların yüksek hassasiyetle üretimi", icon: <Factory className="h-8 w-8" /> },
+                { title: "Teknik Resim Uygulaması", description: "Teknik şartnamelere tam uygunluk ile özel parça üretimi", icon: <Award className="h-8 w-8" /> },
+                { title: "Prototip Üretim", description: "Hızlı prototip ve test parçası imalatı", icon: <CheckCircle className="h-8 w-8" /> },
+                { title: "Seri Üretim", description: "Küçük ve orta ölçekli seri üretim hizmetleri", icon: <Users className="h-8 w-8" /> },
+                { title: "Malzeme Çeşitliliği", description: "Çelik, alüminyum, paslanmaz, pirinç ile üretim", icon: <Settings className="h-8 w-8" /> }
               ].map((service, index) => (
                 <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                  <div className="bg-blue-800 text-white p-3 rounded-lg w-fit mb-4">
-                    {service.icon}
-                  </div>
+                  <div className="bg-blue-800 text-white p-3 rounded-lg w-fit mb-4">{service.icon}</div>
                   <h3 className="text-xl font-semibold text-gray-800 mb-3">{service.title}</h3>
                   <p className="text-gray-600">{service.description}</p>
                 </div>
@@ -427,89 +379,16 @@ function App() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
-                {
-                  name: "TAKUMI PV-1052",
-                  type: "CNC Dik İşleme Merkezi",
-                  features: [
-                    "Tabla Ölçüsü: 1100 x 500 mm",
-                    "X/Y/Z Ekseni: 1000/520/500 mm",
-                    "Maks. Yük Kapasitesi: 800 kg",
-                    "Devir: 8000 rpm",
-                    "ATC Kapasitesi: 24 takım"
-                  ],
-                  image: "/assets/takumi-pv-1052.png"
-                },
-                {
-                  name: "SAMSUNG PL20/240/20MC",
-                  type: "CNC Torna Merkezi",
-                  features: [
-                    "İş Çapı: Ø520 mm",
-                    "İş Boyu: 2000 mm",
-                    "Maks. Dönüş Çapı: 680 mm",
-                    "Spindle Devri: 10-2500 rpm",
-                    "Spindle Motoru: 22/26 kW"
-                  ],
-                  image: "/assets/samsung-pl20-pl240.png"
-                },
-                {
-                  name: "HYUNDAI-WIA KF3500/5A",
-                  type: "5 Eksenli CNC Torna İşleme Merkezi",
-                  features: [
-                    "İş Çapı: Ø520 mm",
-                    "İş Boyu: 2000 mm",
-                    "Maks. Dönüş Çapı: 680 mm",
-                    "Spindle Devri: 10-2500 rpm",
-                    "Spindle Motoru: 22/26 kW",
-                  ],
-                  image: "/assets/hyundai-kf35005.jpg"
-                },
-                {
-                  name: "NURIS LN500W",
-                  type: "MIG/MAG Kaynak Makinesi",
-                  features: [
-                    "Sinerji kontrol", 
-                    "Double pulse", 
-                    "Yüksek verimlilik"
-                  ],
-                  count: 2,
-                  image: "/assets/ln500w-sinerjik-double-pulse.png"
-                },
-                {
-                  name: "MCS32",
-                  type: "Sütunlu Matkap Tezgahı",
-                  features: [
-                    "Maks. Matkap Çapı: 32 mm",
-                    "Masa Ölçüsü: 500 x 600 mm",
-                    "Maks. İş Yüksekliği: 450 mm",
-                    "Spindle Devri: 150-3000 rpm",
-                    "Motor Gücü: 2.2 kW"
-                  ],
-                  image: "/assets/mcs32-sutunlu-matkap-tezgahi.png"
-                },
-                {
-                  name: "MAGMAWELD RS500M",
-                  type: "Kaynak Makinesi",
-                  features: [
-                    "Kaynak Akımı: 20-500 A",
-                    "Çalışma Gerilimi: 3x400 V",
-                    "Boşta Çıkış Gerilimi: 55 V",
-                    "Duty Cycle: %60 @ 500A",
-                    "Ağırlık: 135 kg"
-                  ],
-                  image: "/assets/magmaweld-rs500m.png"
-                }
+                { name: "TAKUMI PV-1052", type: "CNC Dik İşleme Merkezi", features: ["Tabla Ölçüsü: 1100 x 500 mm", "X/Y/Z Ekseni: 1000/520/500 mm", "Maks. Yük Kapasitesi: 800 kg", "Devir: 8000 rpm", "ATC Kapasitesi: 24 takım"], image: "/assets/takumi-pv-1052.png" },
+                { name: "SAMSUNG PL20/240/20MC", type: "CNC Torna Merkezi", features: ["İş Çapı: Ø520 mm", "İş Boyu: 2000 mm", "Maks. Dönüş Çapı: 680 mm", "Spindle Devri: 10-2500 rpm", "Spindle Motoru: 22/26 kW"], image: "/assets/samsung-pl20-pl240.png" },
+                { name: "HYUNDAI-WIA KF3500/5A", type: "5 Eksenli CNC Torna İşleme Merkezi", features: ["İş Çapı: Ø520 mm", "İş Boyu: 2000 mm", "Maks. Dönüş Çapı: 680 mm", "Spindle Devri: 10-2500 rpm", "Spindle Motoru: 22/26 kW"], image: "/assets/hyundai-kf35005.jpg" },
+                { name: "NURIS LN500W", type: "MIG/MAG Kaynak Makinesi", features: ["Sinerji kontrol", "Double pulse", "Yüksek verimlilik"], count: 2, image: "/assets/ln500w-sinerjik-double-pulse.png" },
+                { name: "MCS32", type: "Sütunlu Matkap Tezgahı", features: ["Maks. Matkap Çapı: 32 mm", "Masa Ölçüsü: 500 x 600 mm", "Maks. İş Yüksekliği: 450 mm", "Spindle Devri: 150-3000 rpm", "Motor Gücü: 2.2 kW"], image: "/assets/mcs32-sutunlu-matkap-tezgahi.png" },
+                { name: "MAGMAWELD RS500M", type: "Kaynak Makinesi", features: ["Kaynak Akımı: 20-500 A", "Çalışma Gerilimi: 3x400 V", "Boşta Çıkış Gerilimi: 55 V", "Duty Cycle: %60 @ 500A", "Ağırlık: 135 kg"], image: "/assets/magmaweld-rs500m.png" }
               ].map((machine, index) => (
                 <div key={index} className="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition-shadow border border-gray-200">
                   <div className="h-48 bg-gray-200 overflow-hidden">
-                    <img 
-                      src={machine.image || `https://placehold.co/400x300/1e40af/ffffff?text=${encodeURIComponent(machine.name)}`}
-                      alt={machine.name}
-                      className="w-full h-48 object-cover rounded-t-lg"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = `https://placehold.co/400x300/1e40af/ffffff?text=${encodeURIComponent(machine.name)}`;
-                      }}    
-                    />
+                    <img src={machine.image || `https://placehold.co/400x300/1e40af/ffffff?text=${encodeURIComponent(machine.name)}`} alt={machine.name} className="w-full h-48 object-cover rounded-t-lg" onError={(e) => { const target = e.target as HTMLImageElement; target.src = `https://placehold.co/400x300/1e40af/ffffff?text=${encodeURIComponent(machine.name)}`; }} />
                   </div>
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-4">
@@ -517,19 +396,10 @@ function App() {
                         <h3 className="text-lg font-semibold text-gray-800">{machine.name}</h3>
                         <p className="text-blue-600 font-medium">{machine.type}</p>
                       </div>
-                      {machine.count && (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                          {machine.count} adet
-                        </span>
-                      )}
+                      {machine.count && (<span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">{machine.count} adet</span>)}
                     </div>
                     <ul className="mt-4 space-y-2">
-                      {machine.features.map((feature, i) => (
-                        <li key={i} className="flex items-start">
-                          <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700">{feature}</span>
-                        </li>
-                      ))}
+                      {machine.features.map((feature, i) => (<li key={i} className="flex items-start"><CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" /><span className="text-gray-700">{feature}</span></li>))}
                     </ul>
                   </div>
                 </div>
@@ -559,28 +429,8 @@ function App() {
                 { name: "Hidmaksan", website: "hidmaksan.com", image: "/assets/hidmaksan.svg" }
               ].map((ref, index) => (
                 <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center h-full flex flex-col justify-center items-center">
-                  <a
-                    href={`https://${ref.website}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center h-32 w-full"
-                  >
-                    {ref.image ? (
-                      <img
-                        src={ref.image}
-                        alt={`${ref.name} logo`}
-                        className="max-h-full max-w-full object-contain"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = `https://placehold.co/200x80/1e40af/ffffff?text=${encodeURIComponent(ref.name)}`;
-                          target.className = 'max-h-full max-w-full object-contain';
-                        }}
-                      />
-                    ) : (
-                      <div className="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center">
-                        <Factory className="h-12 w-12 text-blue-800" />
-                      </div>
-                    )}
+                  <a href={`https://${ref.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center h-32 w-full">
+                    {ref.image ? (<img src={ref.image} alt={`${ref.name} logo`} className="max-h-full max-w-full object-contain" onError={(e) => { const target = e.target as HTMLImageElement; target.src = `https://placehold.co/200x80/1e40af/ffffff?text=${encodeURIComponent(ref.name)}`; target.className = 'max-h-full max-w-full object-contain'; }} />) : (<div className="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center"><Factory className="h-12 w-12 text-blue-800" /></div>)}
                   </a>
                 </div>
               ))}
@@ -601,21 +451,9 @@ function App() {
 
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                {
-                  title: "ISO 9001:2015",
-                  subtitle: "Kalite Yönetim Sistemi",
-                  description: "Kalite yönetim sisteminin uluslararası standardı"
-                },
-                {
-                  title: "ISO 14001",
-                  subtitle: "Çevre Yönetim Sistemi", 
-                  description: "Çevresel performans ve sürdürülebilirlik standardı"
-                },
-                {
-                  title: "ISO 45001",
-                  subtitle: "İş Sağlığı ve Güvenliği",
-                  description: "Çalışan sağlığı ve güvenliği yönetim sistemi"
-                }
+                { title: "ISO 9001:2015", subtitle: "Kalite Yönetim Sistemi", description: "Kalite yönetim sisteminin uluslararası standardı" },
+                { title: "ISO 14001", subtitle: "Çevre Yönetim Sistemi", description: "Çevresel performans ve sürdürülebilirlik standardı" },
+                { title: "ISO 45001", subtitle: "İş Sağlığı ve Güvenliği", description: "Çalışan sağlığı ve güvenliği yönetim sistemi" }
               ].map((cert, index) => (
                 <div key={index} className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-lg text-center">
                   <div className="bg-blue-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -650,29 +488,21 @@ function App() {
                 <h3 className="text-2xl font-semibold text-gray-800 mb-6">İletişim Bilgileri</h3>
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
-                    <div className="bg-blue-800 p-3 rounded-lg">
-                      <MapPin className="h-6 w-6 text-white" />
-                    </div>
+                    <div className="bg-blue-800 p-3 rounded-lg"><MapPin className="h-6 w-6 text-white" /></div>
                     <div>
                       <h4 className="font-semibold text-gray-800 mb-1">Adres</h4>
                       <p className="text-gray-600">Tatlıcak Mah, Nasihat Sokak No:1/BK<br />42030 Karatay / Konya</p>
                     </div>
                   </div>
-
                   <div className="flex items-start space-x-4">
-                    <div className="bg-blue-800 p-3 rounded-lg">
-                      <Phone className="h-6 w-6 text-white" />
-                    </div>
+                    <div className="bg-blue-800 p-3 rounded-lg"><Phone className="h-6 w-6 text-white" /></div>
                     <div>
                       <h4 className="font-semibold text-gray-800 mb-1">Telefon</h4>
                       <p className="text-gray-600">+90 553 217 22 46</p>
                     </div>
                   </div>
-
                   <div className="flex items-start space-x-4">
-                    <div className="bg-blue-800 p-3 rounded-lg">
-                      <Mail className="h-6 w-6 text-white" />
-                    </div>
+                    <div className="bg-blue-800 p-3 rounded-lg"><Mail className="h-6 w-6 text-white" /></div>
                     <div>
                       <h4 className="font-semibold text-gray-800 mb-1">E-posta</h4>
                       <p className="text-gray-600">info@rfmmakina.com</p>
@@ -685,65 +515,33 @@ function App() {
                 <h3 className="text-2xl font-semibold text-gray-800 mb-6">Bize Ulaşın</h3>
                 <form className="space-y-4">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      Ad Soyad *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      required
-                    />
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Ad Soyad *</label>
+                    <input type="text" id="name" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      E-posta *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      required
-                    />
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">E-posta *</label>
+                    <input type="email" id="email" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
                   </div>
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                      Telefon
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
+                    <input type="tel" id="phone" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                   </div>
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      Mesajınız *
-                    </label>
-                    <textarea
-                      id="message"
-                      rows={4}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      required
-                    ></textarea>
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Mesajınız *</label>
+                    <textarea id="message" rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required></textarea>
                   </div>
-                  <button
-                    type="submit"
-                    className="w-full bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                  >
-                    Gönder
-                  </button>
+                  <button type="submit" className="w-full bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">Gönder</button>
                 </form>
               </div>
             </div>
           </div>
         </section>
       </main>
-      
+
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
-          <p>&copy; 2024 RFM Makina. Tüm hakları saklıdır.</p>
+          <p>&copy; 2025 RFM Makina. Tüm hakları saklıdır.</p>
         </div>
       </footer>
     </div>
