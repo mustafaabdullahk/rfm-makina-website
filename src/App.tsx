@@ -287,7 +287,7 @@ function App() {
                   Savunma sanayii başta olmak üzere; endüstriyel hidrolik sistemler, tarımsal sulama sistemleri, kalıp üretimi ve otomotiv sektörü gibi çeşitli alanlarda teknik resme uygun, kaliteli ve zamanında üretim gerçekleştirilmektedir.
                 </p>
                 <p className="text-gray-700 leading-relaxed">
-                  CNC freze ve CNC torna tezgâhlarımız ile hem prototip hem de küçük/orta ölçekli seri üretim süreçlerinde çözüm ortağı olarak hizmet verilmektedir.
+                  CNC tezgâhlarımız ile hem prototip hem de küçük/orta ölçekli seri üretim süreçlerinde çözüm ortağı olarak hizmet verilmektedir.
                 </p>
               </div>
               <div className="bg-gray-50 p-8 rounded-lg">
@@ -308,7 +308,7 @@ function App() {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Misyonumuz</h3>
                 <div className="text-left space-y-2">
-                  <p className="text-gray-700 text-sm">• Müşterilerimize yüksek hassasiyetli talaşlı imalat çözümleri sunmak</p>
+                  <p className="text-gray-700 text-sm">• Yüksek hassasiyetli talaşlı imalat çözümleri sunmak</p>
                   <p className="text-gray-700 text-sm">• Kaliteli, teknik şartnamelere uygun ve zamanında üretim sağlamak</p>
                   <p className="text-gray-700 text-sm">• Teknolojik altyapımızı sürekli geliştirerek sürdürülebilir değer yaratmak</p>
                 </div>
@@ -332,7 +332,7 @@ function App() {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Kalite Politikamız</h3>
                 <div className="text-left space-y-2">
-                  <p className="text-gray-700 text-sm">• Müşteri memnuniyetini öncelik kabul ederiz</p>
+                  <p className="text-gray-700 text-sm">• Müşteri memnuniyeti</p>
                   <p className="text-gray-700 text-sm">• Sürekli iyileştirme ve verimlilik odaklı yönetim</p>
                   <p className="text-gray-700 text-sm">• Kalite standartları ve teknik dokümantasyonlara uyum</p>
                   <p className="text-gray-700 text-sm">• İş güvenliği ve çevreye saygı</p>
@@ -430,7 +430,7 @@ function App() {
               ].map((ref, index) => (
                 <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center h-full flex flex-col justify-center items-center">
                   <a href={`https://${ref.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center h-32 w-full">
-                    {ref.image ? (<img src={ref.image} alt={`${ref.name} logo`} className="max-h-full max-w-full object-contain" onError={(e) => { const target = e.target as HTMLImageElement; target.src = `https://placehold.co/200x80/1e40af/ffffff?text=${encodeURIComponent(ref.name)}`; target.className = 'max-h-full max-w-full object-contain'; }} />) : (<div className="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center"><Factory className="h-12 w-12 text-blue-800" /></div>)}
+                    {ref.image ? (<img src={ref.image} alt={`${ref.name} logo`} className="h-24 w-24 object-contain" onError={(e) => { const target = e.target as HTMLImageElement; target.src = `https://placehold.co/96x96/1e40af/ffffff?text=${encodeURIComponent(ref.name)}`; target.className = 'h-24 w-24 object-contain'; }} />) : (<div className="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center"><Factory className="h-12 w-12 text-blue-800" /></div>)}
                   </a>
                 </div>
               ))}
