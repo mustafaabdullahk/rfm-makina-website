@@ -213,7 +213,8 @@ function App() {
               <div className="relative h-full w-full" onMouseEnter={() => setPauseAutoSlide(true)} onMouseLeave={() => setPauseAutoSlide(false)}>
                 {[
                   { image: "./assets/hurjet.jpg", alt: "Hürjet" },
-                  { image: "./assets/kaan.jpg", alt: "KAAN" }
+                  { image: "./assets/kaan.jpg", alt: "KAAN" },
+                  { image: "./assets/sulama-sistemi.webp", alt: "Sulama Sistemi" }
                 ].map((slide, index) => (
                   <div
                     key={index}
@@ -248,10 +249,10 @@ function App() {
                   </div>
                 ))}
 
-                <button onClick={goToPrevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10" aria-label="Önceki slayt">
+                <button onClick={goToPrevSlide} className="absolute left-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10" aria-label="Önceki slayt">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 </button>
-                <button onClick={goToNextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10" aria-label="Sonraki slayt">
+                <button onClick={goToNextSlide} className="absolute right-16 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all z-10" aria-label="Sonraki slayt">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 </button>
 
@@ -350,19 +351,15 @@ function App() {
               <div className="w-20 h-1 bg-blue-800 mx-auto"></div>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-fit mx-auto">
               {[
-                { title: "CNC Freze İşleme", description: "Hassas parça imalatı ve karmaşık geometrilerin işlenmesi", icon: <Settings className="h-8 w-8" /> },
-                { title: "CNC Torna İşleme", description: "Silindirik ve dönel parçaların yüksek hassasiyetle üretimi", icon: <Factory className="h-8 w-8" /> },
-                { title: "Teknik Resim Uygulaması", description: "Teknik şartnamelere tam uygunluk ile özel parça üretimi", icon: <Award className="h-8 w-8" /> },
-                { title: "Prototip Üretim", description: "Hızlı prototip ve test parçası imalatı", icon: <CheckCircle className="h-8 w-8" /> },
-                { title: "Seri Üretim", description: "Küçük ve orta ölçekli seri üretim hizmetleri", icon: <Users className="h-8 w-8" /> },
-                { title: "Malzeme Çeşitliliği", description: "Çelik, alüminyum, paslanmaz, pirinç ile üretim", icon: <Settings className="h-8 w-8" /> }
+                { title: "CNC Torna ve Freze İşleme", description: "Yüksek malzeme çeşitliliği ile (Çelik, Alüminyum, Bronz, Titanyum, Kompozit) Savunma ve havacılık, otomotiv, Makine sektörüne hassas ve yüksek doğrulukta prototip imal etmek ve seri üretim proseslerini geliştirmek\n\n• Hassas parça imalatı ve karmaşık geometrilerin işlenmesi\n• Silindirik ve dönel parçaların yüksek hassasiyetle üretimi\n• Küçük ve orta ölçekli seri üretim hizmetleri", icon: <Settings className="h-8 w-8" /> },
+                { title: "Center ve Lineer Pivot Sulama Sistemi", description: "Tarımsal üretimde verimliliği ve sürdürülebilirliği hedefleyen, ihtiyaca uygun otonom sulama sistemleri gerçekleştirilmektedir. Koşullara bağlı olarak özelleştirilen ürünün gerekli mühendislik çalışmaları ve özel üretimi yapılmaktadır.\n\nRFM Lineer Sulama Sistemleri:\n• Geniş alanlarda eşit ve verimli sulama\n• Modüler yapı ile her araziye uyum\n• Dayanıklı çelik konstrüksiyon\n\nRFM Center Pivot Sulama Sistemleri:\n• Dairesel alanlarda maksimum verimlilik\n• Minimum iş gücü, düşük bakım\n• Otomasyon desteği\n\nİhtiyaca Özel Otonom Makineler:\n• Tamamen proje bazlı tasarım ve üretim\n• Uzaktan kontrol ve yapay zeka desteği\n• Endüstriyel, tarımsal ve özel kullanım alanları\n• Yüksek enerji verimliliği", icon: <Factory className="h-8 w-8" /> }
               ].map((service, index) => (
                 <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
                   <div className="bg-blue-800 text-white p-3 rounded-lg w-fit mb-4">{service.icon}</div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-3">{service.title}</h3>
-                  <p className="text-gray-600">{service.description}</p>
+                  <h3 className="text-2xl font-semibold text-gray-800 mb-4">{service.title}</h3>
+                  <p className="text-gray-600 whitespace-pre-wrap">{service.description}</p>
                 </div>
               ))}
             </div>
