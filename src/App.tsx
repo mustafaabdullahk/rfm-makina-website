@@ -419,7 +419,7 @@ function App() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { name: "TAAC", website: "taac.com.tr", image: "/assets/taachavacilik_logo.jpeg" },
+                { name: "TAAC", website: "taac.com.tr", image: "/assets/taachavacilik_logo.jpg" },
                 { name: "İDAK", website: "idak.com.tr", image: "/assets/idak-logo.png" },
                 { name: "Altınay Savunma", website: "altinay.com", image: "/assets/altinay-savunma-logo.jpg" },
                 { name: "Öztürk PT", website: "ozturkpt.com", image: "/assets/ozturk-pt-logo-black.png" },
@@ -430,7 +430,7 @@ function App() {
               ].map((ref, index) => (
                 <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center h-full flex flex-col justify-center items-center">
                   <a href={`https://${ref.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center h-32 w-full">
-                    {ref.image ? (<img src={ref.image} alt={`${ref.name} logo`} className="h-24 w-24 object-contain" onError={(e) => { const target = e.target as HTMLImageElement; target.src = `https://placehold.co/96x96/1e40af/ffffff?text=${encodeURIComponent(ref.name)}`; target.className = 'h-24 w-24 object-contain'; }} />) : (<div className="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center"><Factory className="h-12 w-12 text-blue-800" /></div>)}
+                    {ref.image ? (<img src={ref.image} alt={`${ref.name} logo`} className="h-full w-full object-contain" onError={(e) => { const target = e.target as HTMLImageElement; target.src = `https://placehold.co/128x128/1e40af/ffffff?text=${encodeURIComponent(ref.name)}`; target.className = 'h-full w-full object-contain'; }} />) : (<div className="bg-blue-100 w-full h-full rounded-full flex items-center justify-center"><Factory className="h-16 w-16 text-blue-800" /></div>)}
                   </a>
                 </div>
               ))}
@@ -511,7 +511,6 @@ function App() {
                 </div>
                 {/* Small map under contact info */}
                 <div className="mt-8 bg-white p-4 rounded-lg shadow-md">
-                  <h4 className="text-xl font-semibold text-gray-800 mb-4">Konumumuz</h4>
                   <div className="relative" style={{ paddingBottom: '75%', height: 0 }}> {/* Adjusted padding for a smaller map */}
                     <iframe
                       src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3149.7129980568725!2d32.57853657642833!3d37.86700530684103!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d0917453c26899%3A0x9a8c7f29d27501c6!2sRFM%20Makina%20Kal%C4%B1p%20Otomotiv!5e0!3m2!1str!2str!4v1755007795593!5m2!1str!2str"
