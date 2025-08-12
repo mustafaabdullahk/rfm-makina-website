@@ -156,9 +156,6 @@ function App() {
                       )}
                       <span className="relative z-10">
                         {item.label}
-                        {activeSection === item.id && (
-                          <span className="absolute -right-1 -top-1 w-2 h-2 bg-blue-600 rounded-full animate-ping"></span>
-                        )}
                       </span>
                     </button>
                   </div>
@@ -191,9 +188,6 @@ function App() {
                       )}
                       <span className="relative z-10">
                         {item.label}
-                        {activeSection === item.id && (
-                          <span className="absolute -right-2 -top-1 w-2 h-2 bg-blue-600 rounded-full animate-ping"></span>
-                        )}
                       </span>
                     </button>
                   </li>
