@@ -282,13 +282,13 @@ function App() {
             <div className="grid md:grid-cols-2 gap-12 mb-16">
               <div>
                 <p className="text-gray-700 leading-relaxed mb-6">
-                  2022 yılından bu yana talaşlı imalat sektöründe faaliyet gösteren RFM Makina, farklı sektörlerdeki müşterilerine yüksek hassasiyetli parça üretimi sunan bir mühendislik firması olarak hizmet verilmektedir.
+                  2022 yılından bu yana talaşlı imalat sektöründe faaliyet gösteren RFM Makina, farklı sektörlerdeki müşterilerine yüksek hassasiyetli parça üretimi sunan bir mühendislik firması olarak hizmet vermektedir.
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-6">
                   Savunma sanayii başta olmak üzere; endüstriyel hidrolik sistemler, tarımsal sulama sistemleri, kalıp üretimi ve otomotiv sektörü gibi çeşitli alanlarda teknik resme uygun, kaliteli ve zamanında üretim gerçekleştirilmektedir.
                 </p>
                 <p className="text-gray-700 leading-relaxed">
-                  CNC tezgâhlarımız ile hem prototip hem de küçük/orta ölçekli seri üretim süreçlerinde çözüm ortağı olarak hizmet verilmektedir.
+                  CNC tezgâhlarımız ile hem prototip hem de küçük/orta ölçekli seri üretim süreçlerinde çözüm ortağı olarak hizmet vermektedir.
                 </p>
               </div>
               <div className="bg-gray-50 p-8 rounded-lg">
@@ -322,7 +322,7 @@ function App() {
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Vizyonumuz</h3>
                 <div className="text-left space-y-2">
                   <p className="text-gray-700 text-sm">• Türkiye'nin talaşlı üretim alanında güvenilir çözüm sağlayıcısı olmak</p>
-                  <p className="text-gray-700 text-sm">• Yüksek kalite anlayışı ve çok sektörlü üretim kabiliyeti</p>
+                  <p className="text-gray-700 text-sm">• Yüksek kalite anlayışı ve çok sektörlü üretim kabiliyetine sahip olmak</p>
                   <p className="text-gray-700 text-sm">• Yurt içi ve yurt dışında tercih edilen marka olmak</p>
                 </div>
               </div>
@@ -353,7 +353,7 @@ function App() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-fit mx-auto">
               {[
-                { title: "CNC Torna ve Freze İşleme", description: "Yüksek malzeme çeşitliliği ile (Çelik, Alüminyum, Bronz, Titanyum, Kompozit) Savunma ve havacılık, otomotiv, Makine sektörüne hassas ve yüksek doğrulukta prototip imal etmek ve seri üretim proseslerini geliştirmek\n\n• Hassas parça imalatı ve karmaşık geometrilerin işlenmesi\n• Silindirik ve dönel parçaların yüksek hassasiyetle üretimi\n• Küçük ve orta ölçekli seri üretim hizmetleri", icon: <Settings className="h-8 w-8" /> },
+                { title: "CNC Torna ve Freze İşleme", description: "Yüksek malzeme çeşitliliği ile (Çelik, Alüminyum, Bronz, Titanyum, Kompozit) Savunma ve havacılık, Otomotiv, Makine sektörüne hassas ve yüksek doğrulukta prototip imal etmek ve seri üretim proseslerini geliştirmek\n\n• Hassas parça imalatı ve karmaşık geometrilerin işlenmesi\n• Silindirik ve dönel parçaların yüksek hassasiyetle üretimi\n• Küçük ve orta ölçekli seri üretim hizmetleri", icon: <Settings className="h-8 w-8" /> },
                 { title: "Center ve Lineer Pivot Sulama Sistemi", description: "Tarımsal üretimde verimliliği ve sürdürülebilirliği hedefleyen, ihtiyaca uygun otonom sulama sistemleri gerçekleştirilmektedir. Koşullara bağlı olarak özelleştirilen ürünün gerekli mühendislik çalışmaları ve özel üretimi yapılmaktadır.\n\nRFM Lineer Sulama Sistemleri:\n• Geniş alanlarda eşit ve verimli sulama\n• Modüler yapı ile her araziye uyum\n• Dayanıklı çelik konstrüksiyon\n\nRFM Center Pivot Sulama Sistemleri:\n• Dairesel alanlarda maksimum verimlilik\n• Minimum iş gücü, düşük bakım\n• Otomasyon desteği\n\nİhtiyaca Özel Otonom Makineler:\n• Tamamen proje bazlı tasarım ve üretim\n• Uzaktan kontrol ve yapay zeka desteği\n• Endüstriyel, tarımsal ve özel kullanım alanları\n• Yüksek enerji verimliliği", icon: <Factory className="h-8 w-8" /> }
               ].map((service, index) => (
                 <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
@@ -497,7 +497,7 @@ function App() {
                     <div className="bg-blue-800 p-3 rounded-lg"><Phone className="h-6 w-6 text-white" /></div>
                     <div>
                       <h4 className="font-semibold text-gray-800 mb-1">Telefon</h4>
-                      <p className="text-gray-600">+90 553 217 22 46</p>
+                      <p className="text-gray-600">Rafet Koyuncu - +90 553 217 22 46</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-4">
@@ -506,6 +506,22 @@ function App() {
                       <h4 className="font-semibold text-gray-800 mb-1">E-posta</h4>
                       <p className="text-gray-600">info@rfmmakina.com</p>
                     </div>
+                  </div>
+                </div>
+                {/* Small map under contact info */}
+                <div className="mt-8 bg-white p-4 rounded-lg shadow-md">
+                  <h4 className="text-xl font-semibold text-gray-800 mb-4">Konumumuz</h4>
+                  <div className="relative" style={{ paddingBottom: '75%', height: 0 }}> {/* Adjusted padding for a smaller map */}
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3149.7129980568725!2d32.57853657642833!3d37.86700530684103!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d0917453c26899%3A0x9a8c7f29d27501c6!2sRFM%20Makina%20Kal%C4%B1p%20Otomotiv!5e0!3m2!1str!2str!4v1755007795593!5m2!1str!2str"
+                      width="600"
+                      height="450"
+                      style={{ border: 0, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                      allowFullScreen={true}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="RFM Makina Konumu"
+                    ></iframe>
                   </div>
                 </div>
               </div>
